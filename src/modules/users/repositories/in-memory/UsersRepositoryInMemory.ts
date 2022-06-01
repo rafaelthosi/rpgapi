@@ -1,4 +1,5 @@
 import { ICreateUserDTO } from "@modules/users/dtos/ICreateUserDTO";
+import { IUpdateUserDTO } from "@modules/users/dtos/IUpdateUserDTO";
 import { User } from "@modules/users/infra/typeorm/entities/User";
 
 import { IUsersRepository } from "../IUsersRepository";
@@ -31,6 +32,36 @@ class UsersRepositoryInMemory implements IUsersRepository {
     const user = this.users.find((user) => user.username === username);
 
     return user;
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = this.users.find((user) => user.id === id);
+
+    return user;
+  }
+
+  async update({
+    id,
+    isMaster,
+    password,
+    username,
+  }: IUpdateUserDTO): Promise<User | void> {
+    this.users.forEach((user) => {
+      if (user.id === id) {
+        Object.assign(user, {
+          isMaster: isMaster || user.isMaster,
+          password: password || user.password,
+          username: username || user.username,
+        });
+      }
+      return user;
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+
+    this.users.splice(userIndex, 1);
   }
 }
 
