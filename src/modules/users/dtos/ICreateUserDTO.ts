@@ -1,6 +1,6 @@
 interface ICreateUserDTO {
   username: string;
-  isMaster: boolean;
+  isMaster?: boolean;
   password: string;
   // characters?: Character[];
 }

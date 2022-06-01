@@ -1,3 +1,5 @@
+import { AppError } from "@shared/errors/AppError";
+
 import { UsersRepositoryInMemory } from "../../repositories/in-memory/UsersRepositoryInMemory";
 import { ListUsersUseCase } from "../listUsers/ListUsersUseCase";
 import { CreateUserUseCase } from "./createUserUseCase";
@@ -24,5 +26,21 @@ describe("Create User", () => {
 
     expect(users).toHaveLength(1);
     expect(users[0]).toHaveProperty("id");
+  });
+
+  it("Should not be able to create an already existing user", () => {
+    expect(async () => {
+      await createUserUseCase.execute({
+        isMaster: false,
+        password: "123",
+        username: "teste",
+      });
+
+      await createUserUseCase.execute({
+        isMaster: false,
+        password: "123",
+        username: "teste",
+      });
+    }).rejects.toBeInstanceOf(AppError);
   });
 });
